@@ -11,6 +11,10 @@
     "type": "git",
     "url": "git+https://github.com/chrispalka/LeetCodeBot.git"
   },
+  "engines": {
+    "node": "17.2.0",
+    "npm": "8.1.4"
+  },
   "author": "",
   "license": "ISC",
   "bugs": {
