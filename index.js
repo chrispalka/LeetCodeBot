@@ -63,7 +63,7 @@ client.on('interactionCreate', async interaction => {
 
   if (interaction.commandName === 'code') {
     try {
-      const response = await axios.post('https://leetcode.com/graphql', requestOptions)
+      const response = await axios.post('https://secret-taiga-66028.herokuapp.com/leetcode.com/graphql', requestOptions)
       response.json();
 
       let questionsArray = response.data.topicTag.questions || [];
