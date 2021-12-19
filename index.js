@@ -64,6 +64,7 @@ client.on('interactionCreate', async interaction => {
   if (interaction.commandName === 'code') {
     try {
       const response = await axios.post('https://leetcode.com/graphql', requestOptions)
+      response.json();
 
       let questionsArray = response.data.topicTag.questions || [];
       let filteredquestions = questionsArray.filter(item => item.difficulty === 'Easy');
