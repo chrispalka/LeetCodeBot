@@ -1,4 +1,6 @@
 import dotenv from 'dotenv';
+import axios from 'axios';
+
 dotenv.config();
 
 import { REST } from '@discordjs/rest';
@@ -6,14 +8,34 @@ import { Routes } from 'discord-api-types/v9';
 import { Client, Intents } from 'discord.js';
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
 
-const commands = [{
-  name: 'ping',
-  description: 'Replies with Pong!'
-}];
+const commands = [
+  {
+    name: 'ping',
+    description: 'Replies with Pong!'
+  },
+  {
+    name: 'code',
+    description: 'Grabs leetcode problem'
+  }
+];
 
 const { DISCORD_TOKEN, CLIENT_ID, GUILD_ID } = process.env;
 
 const rest = new REST({ version: '9' }).setToken(DISCORD_TOKEN);
+
+const myHeaders = new Headers();
+myHeaders.append("'Content-Type'", "application/json");
+
+const graphql = JSON.stringify({
+  query: `query getTopicTag($slug: String!) {topicTag(slug: $slug){name translatedName questions{status title difficulty titleSlug acRate}} }`,
+  variables: { "slug": 'array' }
+})
+
+const requestOptions = {
+  method: 'POST',
+  headers: myHeaders,
+  body: graphql
+};
 
 (async () => {
   try {
@@ -39,6 +61,21 @@ client.on('interactionCreate', async interaction => {
 
   if (interaction.commandName === 'ping') {
     await interaction.reply('Pong!');
+  }
+
+  if (interaction.commandName === 'code') {
+    try {
+      const response = await axios.post('https://leetcode.com/graphql', requestOptions)
+
+      let questionsArray = response.data.topicTag.questions || [];
+      let filteredquestions = questionsArray.filter(item => item.difficulty === 'Easy');
+      let size = filteredquestions.length;
+      let randomQuestion = Math.floor(Math.random() * size);
+      const problemURL = `https://leetcode.com/problems/${filteredquestions[randomQuestion].titleSlug}`;
+      await interaction.reply(problemURL);
+    } catch (err) {
+      console.log('Error: ', err)
+    }
   }
 });
 
