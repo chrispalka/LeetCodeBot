@@ -23,8 +23,6 @@ const { DISCORD_TOKEN, CLIENT_ID, GUILD_ID } = process.env;
 
 const rest = new REST({ version: '9' }).setToken(DISCORD_TOKEN);
 
-const myHeaders = new Headers();
-myHeaders.append("'Content-Type'", "application/json");
 
 const graphql = JSON.stringify({
   query: `query getTopicTag($slug: String!) {topicTag(slug: $slug){name translatedName questions{status title difficulty titleSlug acRate}} }`,
@@ -33,7 +31,7 @@ const graphql = JSON.stringify({
 
 const requestOptions = {
   method: 'POST',
-  headers: myHeaders,
+  headers: {'Content-Type': 'application/json'},
   body: graphql
 };
 
