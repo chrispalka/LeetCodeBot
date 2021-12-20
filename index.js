@@ -62,11 +62,13 @@ client.on('ready', () => {
 client.on('interactionCreate', async (interaction) => {
   if (!interaction.isCommand()) return;
 
-  if (interaction.commandName === 'ping') {
+  const { commandName } = interaction
+
+  if (commandName === 'ping') {
     await interaction.reply('Pong!');
   }
 
-  if (interaction.commandName === 'code') {
+  if (commandName === 'code') {
     let difficulty = '';
     let proceed = false;
     let filterType = 'question_one';
