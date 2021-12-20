@@ -1,0 +1,28 @@
+{
+  "question_one": {
+    "question": "Easy, Medium, Hard, Random?",
+    "answers": [
+      "Easy",
+      "Medium",
+      "Hard",
+      "Random"
+    ]
+  },
+  "question_two": {
+    "question": "Please Specify Problem Type (array, string, dynamic-programming, hash-table, binary-tree, tree, binary-search-tree, recursion, backtracking, graph, linked-list, trie)",
+    "answers": [
+      "array",
+      "string",
+      "dynamic-programming",
+      "hash-table",
+      "binary-tree",
+      "tree",
+      "binary-search-tree",
+      "recursion",
+      "backtracking",
+      "graph",
+      "linked-list",
+      "trie"
+    ]
+  }
+}
