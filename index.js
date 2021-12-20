@@ -87,7 +87,7 @@ client.on('interactionCreate', async (interaction) => {
             proceed = true;
           })
           .catch(collected => {
-            interaction.followUp('Looks like nobody got the answer this time.');
+            interaction.followUp('You took too long! Please try again.');
           })
           .then(() => {
             if (proceed) {
@@ -113,7 +113,7 @@ client.on('interactionCreate', async (interaction) => {
                         .catch((err) => console.log(err));
                     })
                     .catch(collected => {
-                      interaction.followUp('Looks like nobody got the answer this time.');
+                      interaction.followUp('You took too long! Please try again.');
                     })
                 })
             }
