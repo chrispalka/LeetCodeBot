@@ -117,16 +117,16 @@ client.on('interactionCreate', async (interaction) => {
                         .catch((err) => console.log(err));
                     })
                     .catch((err) => console.log(err))
-                }
-              })
+                })
+            }
+          })
+          .catch((collected) => {
+            interaction.followUp('Looks like nobody got the answer this time.');
+          });
       })
       .catch((collected) => {
         interaction.followUp('Looks like nobody got the answer this time.');
       });
-  })
-  .catch((collected) => {
-    interaction.followUp('Looks like nobody got the answer this time.');
-  });
   }
 });
 
