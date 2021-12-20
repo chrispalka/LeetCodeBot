@@ -93,27 +93,31 @@ client.on('interactionCreate', async (interaction) => {
           .then(() => {
             interaction.followUp(questions.question_two.question, { fetchReply: true })
               .then(() => {
-                interaction.channel.awaitMessages({ filterType, max: 1, time: 30000, errors: ['time'] })
-                  .then((collected) => {
-                    axios({
-                      url: 'https://leetcode.com/graphql',
-                      method: 'post',
-                      data: {
-                        query: `query getTopicTag($slug: String!) {topicTag(slug: $slug){name translatedName questions{status title difficulty titleSlug acRate}} }`,
-                        variables: { "slug": collected.first().content }
-                      }
-                    })
-                      .then((response) => {
-                        const { data } = response.data;
-                        const questionArray = data.topicTag.questions || [];
-                        console.log(difficulty)
-                        const filteredQuestions = questionArray.filter(question => question.difficulty === difficulty);
-                        const randomQuestion = Math.floor(Math.random() * filteredQuestions.length);
-                        interaction.followUp(`https://leetcode.com/problems/${filteredQuestions[randomQuestion].titleSlug}`);
+                if (questions.question_one.answers.indexOf(difficulty) === -1) {
+                  interaction.followUp('Please type a correct answer')
+                } else {
+                  interaction.channel.awaitMessages({ filterType, max: 1, time: 30000, errors: ['time'] })
+                    .then((collected) => {
+                      axios({
+                        url: 'https://leetcode.com/graphql',
+                        method: 'post',
+                        data: {
+                          query: `query getTopicTag($slug: String!) {topicTag(slug: $slug){name translatedName questions{status title difficulty titleSlug acRate}} }`,
+                          variables: { "slug": collected.first().content }
+                        }
                       })
-                      .catch((err) => console.log(err));
-                  })
-                  .catch((err) => console.log(err))
+                        .then((response) => {
+                          const { data } = response.data;
+                          const questionArray = data.topicTag.questions || [];
+                          console.log(difficulty)
+                          const filteredQuestions = questionArray.filter(question => question.difficulty === difficulty);
+                          const randomQuestion = Math.floor(Math.random() * filteredQuestions.length);
+                          interaction.followUp(`https://leetcode.com/problems/${filteredQuestions[randomQuestion].titleSlug}`);
+                        })
+                        .catch((err) => console.log(err));
+                    })
+                    .catch((err) => console.log(err))
+                }
               })
           })
           .catch((collected) => {
