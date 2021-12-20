@@ -91,11 +91,11 @@ client.on('interactionCreate', async (interaction) => {
             }
           })
           .then(() => {
-            interaction.followUp(questions.question_two.question, { fetchReply: true })
-              .then(() => {
-                if (questions.question_one.answers.indexOf(difficulty) === -1) {
-                  interaction.followUp('Please type a correct answer')
-                } else {
+            if (questions.question_one.answers.indexOf(difficulty) === -1) {
+              interaction.followUp('Please type a correct answer')
+            } else {
+              interaction.followUp(questions.question_two.question, { fetchReply: true })
+                .then(() => {
                   interaction.channel.awaitMessages({ filterType, max: 1, time: 30000, errors: ['time'] })
                     .then((collected) => {
                       axios({
@@ -119,14 +119,14 @@ client.on('interactionCreate', async (interaction) => {
                     .catch((err) => console.log(err))
                 }
               })
-          })
-          .catch((collected) => {
-            interaction.followUp('Looks like nobody got the answer this time.');
-          });
       })
       .catch((collected) => {
         interaction.followUp('Looks like nobody got the answer this time.');
       });
+  })
+  .catch((collected) => {
+    interaction.followUp('Looks like nobody got the answer this time.');
+  });
   }
 });
 
