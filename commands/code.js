@@ -19,7 +19,7 @@ module.exports = {
     interaction.reply(questions.question_one.question, { fetchReply: true })
       .then(() => {
         interaction.channel.awaitMessages({ filter, max: 1, time: 30000, errors: ['time'] })
-          .then(collected => {
+          .then((collected) => {
             if (collected.first().content === 'random') {
               difficulty = titleCaseHelper(questions.question_one.answers[Math.floor(Math.random() * questions.question_one.answers.length - 1)])
             } else {
@@ -28,7 +28,7 @@ module.exports = {
             filterType = 'question_two'
             proceed = true;
           })
-          .catch(collected => {
+          .catch((collected) => {
             interaction.followUp('You took too long! Please try again.');
           })
           .then(() => {
@@ -54,7 +54,7 @@ module.exports = {
                         })
                         .catch((err) => console.log(err));
                     })
-                    .catch(collected => {
+                    .catch((collected) => {
                       interaction.followUp('You took too long! Please try again.');
                     })
                 })

@@ -1,5 +1,7 @@
 const dotenv = require('dotenv');
 const fs = require('fs');
+const cron = require('cron');
+const dailyProblem = require('./jobs/tasks.js')
 const { Client, Collection, Intents } = require('discord.js');
 
 
@@ -12,12 +14,10 @@ const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('
 
 for (const file of commandFiles) {
   const command = require(`./commands/${file}`)
-  // Set a new item in the Collection
-  // With the key as the command name and the value as the exported module
   client.commands.set(command.data.name, command);
 }
 
-const { DISCORD_TOKEN } = process.env;
+const { DISCORD_TOKEN, CHANNEL_ID, GUILD_ID } = process.env;
 
 client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
@@ -38,4 +38,17 @@ client.on('interactionCreate', async interaction => {
   }
 });
 
+client.once('ready', () => {
+  let scheduledMessage = new cron.CronJob('0 10 * * *', () => {
+    const guild = client.guilds.cache.get(GUILD_ID);
+    const channel = guild.channels.cache.get(CHANNEL_ID);
+    (async () => {
+      const problem = await dailyProblem()
+      channel.send(problem);
+    })()
+  });
+  scheduledMessage.start()
+})
+
 client.login(DISCORD_TOKEN);
+
