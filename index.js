@@ -1,5 +1,6 @@
 const dotenv = require('dotenv');
 const fs = require('fs');
+const Sequelize = require('sequelize');
 const cron = require('cron');
 const dailyProblem = require('./jobs/tasks.js')
 const { Client, Collection, Intents } = require('discord.js');
@@ -39,7 +40,7 @@ client.on('interactionCreate', async interaction => {
 });
 
 client.once('ready', () => {
-  let scheduledMessage = new cron.CronJob('0 10 * * *', () => {
+  let scheduledMessage = new cron.CronJob('* * * * *', () => {
     const guild = client.guilds.cache.get(GUILD_ID);
     const channel = guild.channels.cache.get(CHANNEL_ID);
     (async () => {
