@@ -1,2 +1,2 @@
 worker: node index.js
-clock: node tasks.js
+clock: node jobs/tasks.js
