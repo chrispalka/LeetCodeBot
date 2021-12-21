@@ -18,7 +18,7 @@ for (const file of commandFiles) {
   client.commands.set(command.data.name, command);
 }
 
-const { DISCORD_TOKEN, CHANNEL_ID, GUILD_ID } = process.env;
+const { DISCORD_TOKEN } = process.env;
 
 client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
@@ -39,17 +39,6 @@ client.on('interactionCreate', async interaction => {
   }
 });
 
-client.once('ready', () => {
-  let scheduledMessage = new cron.CronJob('0 10 * * *', () => {
-    const guild = client.guilds.cache.get(GUILD_ID);
-    const channel = guild.channels.cache.get(CHANNEL_ID);
-    (async () => {
-      const problem = await dailyProblem()
-      channel.send(problem);
-    })()
-  });
-  scheduledMessage.start()
-})
 
 client.login(DISCORD_TOKEN);
 
