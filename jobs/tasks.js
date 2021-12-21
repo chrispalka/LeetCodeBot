@@ -12,7 +12,7 @@ const problemTypes = [
   "backtracking",
   "graph",
   "linked-list",
-  "trie"
+  "trie" 
 ]
 
 const dailyProblem = async () => {
