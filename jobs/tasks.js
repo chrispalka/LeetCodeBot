@@ -1,13 +1,4 @@
 const axios = require('axios');
-const dotenv = require('dotenv');
-const cron = require('cron');
-const { Client, Intents } = require('discord.js');
-
-dotenv.config();
-
-const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
-
-const { DISCORD_TOKEN, CHANNEL_ID, GUILD_ID } = process.env;
 
 const problemTypes = [
   "array",
@@ -45,18 +36,5 @@ const dailyProblem = async () => {
     console.log(err)
   }
 }
-client.once('ready', () => {
-  let scheduledMessage = new cron.CronJob('* * * * * *', () => {
-    const guild = client.guilds.cache.get(GUILD_ID);
-    const channel = guild.channels.cache.get(CHANNEL_ID);
-    (async () => {
-      const problem = await dailyProblem()
-      channel.send(problem);
-    })()
-  });
-  scheduledMessage.start()
-})
-
-client.login(DISCORD_TOKEN);
 
 module.exports = dailyProblem;
