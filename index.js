@@ -4,7 +4,7 @@ const cron = require('cron');
 const cronitor = require('cronitor')('2af79c3e8e664dcf9e483347828c276e');
 const CronTime = require('cron').CronTime
 const dailyProblem = require('./jobs/tasks.js')
-const { getParams, addParam } = require('./models/index.js');
+const { getParams, updateParam } = require('./models/index.js');
 const { Client, Collection, Intents } = require('discord.js');
 const { mainModule } = require('process');
 
@@ -52,10 +52,10 @@ client.once('ready', async () => {
       let difficulty = 'Easy';
       let problemType = 'string';
       const params = await getParams();
-      if (params.length > 0) {
-        difficulty = params[0].dataValues.difficulty;
-        problemType = params[0].dataValues.problemType;
-        interval = params[0].dataValues.interval;
+      if (params) {
+        difficulty = params.dataValues.difficulty;
+        problemType = params.dataValues.problemType;
+        interval = params.dataValues.interval;
       }
       const problem = await dailyProblem(difficulty, problemType);
       channel.send(problem);
@@ -65,18 +65,16 @@ client.once('ready', async () => {
 
   const checkInterval = new cron.CronJob('* * * * *', () => {
     (async () => {
-      let id, previousInterval, currentInterval, difficulty, problemType
+      let id, previousInterval, currentInterval;
       const params = await getParams();
-      if (params.length > 0 && params[0].dataValues.previousInterval !== '') {
-        id = params[0].dataValues.id;
-        currentInterval = params[0].dataValues.currentInterval;
-        difficulty = params[0].dataValues.difficulty;
-        problemType = params[0].dataValues.problemType
-        if (currentInterval !== params[0].dataValues.previousInterval) {
-          previousInterval = params[0].dataValues.currentInterval;
+      if (params && params.dataValues.previousInterval !== '') {
+        id = params.dataValues.id;
+        currentInterval = params.dataValues.currentInterval;
+        if (currentInterval !== params.dataValues.previousInterval) {
+          previousInterval = params.dataValues.currentInterval;
           scheduledMessage.setTime(new CronTime(currentInterval))
           scheduledMessage.start();
-          addParam(id, difficulty, problemType, currentInterval, previousInterval)
+          updateParam(id, currentInterval, previousInterval)
         }
       }
     })()

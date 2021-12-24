@@ -1,7 +1,7 @@
 const questions = require('../questions.json')
 const titleCaseHelper = require('../helpers/titleCaseHelper.js');
 const Sequelize = require('sequelize');
-const { addParam, deleteParam, getParams } = require('../models/index.js');
+const { addParam, updateParam, getParams } = require('../models/index.js');
 const { SlashCommandBuilder } = require('@discordjs/builders');
 
 module.exports = {
@@ -58,16 +58,20 @@ module.exports = {
                                 interval = collected.first().content.toLowerCase();
                                 (async () => {
                                   let previousInterval = '';
-                                  let id = 5
                                   const params = await getParams();
-                                  if (params.length > 0) {
-                                    id = params[0].dataValues.id;
-                                    previousInterval = params[0].dataValues.currentInterval;
+                                  if (params) {
+                                    id = params.dataValues.id;
+                                    previousInterval = params.dataValues.currentInterval;
+                                    updateParam(id, intervals[interval], previousInterval)
+                                      .then(() => {
+                                        interaction.followUp('Configuration Updated')
+                                      })
+                                  } else {
+                                    addParam(difficulty, problemType, intervals[interval], previousInterval)
+                                      .then(() => {
+                                        interaction.followUp('Configuration Updated')
+                                      })
                                   }
-                                  addParam(id, difficulty, problemType, intervals[interval], previousInterval)
-                                    .then(() => {
-                                      interaction.followUp('Configuration Updated')
-                                    })
                                 })()
                               })
                               .catch((err) => {

@@ -36,15 +36,23 @@ db.Sequelize = Sequelize;
 
 module.exports = {
   db,
-  addParam: (id, difficulty, problemType, currentInterval, previousInterval) => db.params.upsert({
-    id, difficulty, problemType, currentInterval, previousInterval
+  updateParam: (id, currentInterval, previousInterval) => db.params.upsert({
+    id, currentInterval, previousInterval
+  },
+    { where: { id } }
+  ).then((response) => response)
+    .catch((err) => console.log(err)),
+  addParam: (difficulty, problemType, currentInterval, previousInterval) => db.params.create({
+    difficulty, problemType, currentInterval, previousInterval
   }).then((response) => response)
     .catch((err) => console.log(err)),
   deleteParam: () => db.params.destroy({
     where: {}
   }).then((response) => response)
     .catch((err) => console.log(err)),
-  getParams: () => db.params.findAll()
+  getParams: () => db.params.findOne({
+    where: {}
+  })
     .then(response => response)
     .catch((err) => console.log(err)),
   getInterval: (interval) => db.params.findAll({
