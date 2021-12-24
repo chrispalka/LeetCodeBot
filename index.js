@@ -1,9 +1,12 @@
 const dotenv = require('dotenv');
 const fs = require('fs');
-const Sequelize = require('sequelize');
 const cron = require('cron');
+const cronitor = require('cronitor')('2af79c3e8e664dcf9e483347828c276e');
+const CronTime = require('cron').CronTime
 const dailyProblem = require('./jobs/tasks.js')
+const { getParams, addParam } = require('./models/index.js');
 const { Client, Collection, Intents } = require('discord.js');
+const { mainModule } = require('process');
 
 
 dotenv.config();
@@ -14,7 +17,7 @@ client.commands = new Collection();
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
 for (const file of commandFiles) {
-  const command = require(`./commands/${file}`)
+  const command = require(`./commands/${file}`);
   client.commands.set(command.data.name, command);
 }
 
@@ -39,16 +42,46 @@ client.on('interactionCreate', async interaction => {
   }
 });
 
-client.once('ready', () => {
-  let scheduledMessage = new cron.CronJob('0 10 * * *', () => {
+
+client.once('ready', async () => {
+  let interval = '* * * * *';
+  const scheduledMessage = new cron.CronJob(interval, () => {
     const guild = client.guilds.cache.get(GUILD_ID);
     const channel = guild.channels.cache.get(CHANNEL_ID);
     (async () => {
-      const problem = await dailyProblem()
+      let difficulty = 'Easy';
+      let problemType = 'string';
+      const params = await getParams();
+      if (params.length > 0) {
+        difficulty = params[0].dataValues.difficulty;
+        problemType = params[0].dataValues.problemType;
+        interval = params[0].dataValues.interval;
+      }
+      const problem = await dailyProblem(difficulty, problemType);
       channel.send(problem);
     })()
   });
-  scheduledMessage.start()
+  scheduledMessage.start();
+
+  const checkInterval = new cron.CronJob('* * * * *', () => {
+    (async () => {
+      let id, previousInterval, currentInterval, difficulty, problemType
+      const params = await getParams();
+      if (params.length > 0 && params[0].dataValues.previousInterval !== '') {
+        id = params[0].dataValues.id;
+        currentInterval = params[0].dataValues.currentInterval;
+        difficulty = params[0].dataValues.difficulty;
+        problemType = params[0].dataValues.problemType
+        if (currentInterval !== params[0].dataValues.previousInterval) {
+          previousInterval = params[0].dataValues.currentInterval;
+          scheduledMessage.setTime(new CronTime(currentInterval))
+          scheduledMessage.start();
+          addParam(id, difficulty, problemType, currentInterval, previousInterval)
+        }
+      }
+    })()
+  });
+  checkInterval.start();
 })
 
 

@@ -24,5 +24,15 @@
       "linked-list",
       "trie"
     ]
+  },
+  "question_three": {
+    "question": "Please Specify Frequency (hourly, daily, weekly)",
+    "answers": [
+      "minute",
+      "fiveMinute",
+      "hourly",
+      "daily",
+      "weekly"
+    ]
   }
 }

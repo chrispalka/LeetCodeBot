@@ -1,30 +1,17 @@
 const axios = require('axios');
 
-const problemTypes = [
-  "array",
-  "string",
-  "dynamic-programming",
-  "hash-table",
-  "binary-tree",
-  "tree",
-  "binary-search-tree",
-  "recursion",
-  "backtracking",
-  "graph",
-  "linked-list",
-  "trie"
-]
-
-const dailyProblem = async () => {
-  const randomProblem = problemTypes[Math.floor(Math.random() * problemTypes.length)];
-  const difficulty = "Easy";
+const dailyProblem = async (difficulty, problemType) => {
+  const difficulties = ['Easy', 'Medium', 'Hard']
+  if (difficulty === 'Random') {
+    difficulty = difficulties[Math.floor(Math.random() * difficulties.length)]
+  }
   try {
     const response = await axios({
       url: 'https://leetcode.com/graphql',
       method: 'post',
       data: {
         query: `query getTopicTag($slug: String!) {topicTag(slug: $slug){name translatedName questions{status title difficulty titleSlug acRate}} }`,
-        variables: { "slug": randomProblem }
+        variables: { "slug": problemType }
       }
     })
     const { data } = response.data;
