@@ -44,7 +44,13 @@ client.on('interactionCreate', async interaction => {
 
 
 client.once('ready', async () => {
-  let interval = '* * * * *';
+  (async () => {
+    let interval = '* 10 * * *';
+    const params = await getParams();
+    if (params) {
+      interval = params.dataValues.currentInterval;
+    }
+  })
   const scheduledMessage = new cron.CronJob(interval, () => {
     const guild = client.guilds.cache.get(GUILD_ID);
     const channel = guild.channels.cache.get(CHANNEL_ID);
