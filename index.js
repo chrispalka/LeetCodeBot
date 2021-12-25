@@ -50,24 +50,24 @@ client.once('ready', async () => {
     if (params) {
       interval = params.dataValues.currentInterval;
     }
+    const scheduledMessage = new cron.CronJob(interval, () => {
+      const guild = client.guilds.cache.get(GUILD_ID);
+      const channel = guild.channels.cache.get(CHANNEL_ID);
+      (async () => {
+        let difficulty = 'Easy';
+        let problemType = 'string';
+        const params = await getParams();
+        if (params) {
+          difficulty = params.dataValues.difficulty;
+          problemType = params.dataValues.problemType;
+          interval = params.dataValues.interval;
+        }
+        const problem = await dailyProblem(difficulty, problemType);
+        channel.send(problem);
+      })()
+    });
+    scheduledMessage.start();
   })
-  const scheduledMessage = new cron.CronJob(interval, () => {
-    const guild = client.guilds.cache.get(GUILD_ID);
-    const channel = guild.channels.cache.get(CHANNEL_ID);
-    (async () => {
-      let difficulty = 'Easy';
-      let problemType = 'string';
-      const params = await getParams();
-      if (params) {
-        difficulty = params.dataValues.difficulty;
-        problemType = params.dataValues.problemType;
-        interval = params.dataValues.interval;
-      }
-      const problem = await dailyProblem(difficulty, problemType);
-      channel.send(problem);
-    })()
-  });
-  scheduledMessage.start();
 
   const checkInterval = new cron.CronJob('* * * * *', () => {
     (async () => {
