@@ -1,7 +1,6 @@
 const dotenv = require('dotenv');
 const fs = require('fs');
 const cron = require('cron');
-const cronitor = require('cronitor')('2af79c3e8e664dcf9e483347828c276e');
 const CronTime = require('cron').CronTime
 const dailyProblem = require('./jobs/tasks.js')
 const { getParams, updateParam } = require('./models/index.js');
@@ -44,36 +43,34 @@ client.on('interactionCreate', async interaction => {
 
 
 client.once('ready', async () => {
-  (async () => {
-    let interval = '* 10 * * *';
-    const params = await getParams();
-    if (params) {
-      interval = params.dataValues.currentInterval;
-    }
-    const scheduledMessage = new cron.CronJob(interval, () => {
-      const guild = client.guilds.cache.get(GUILD_ID);
-      const channel = guild.channels.cache.get(CHANNEL_ID);
-      (async () => {
-        let difficulty = 'Easy';
-        let problemType = 'string';
-        const params = await getParams();
-        if (params) {
-          difficulty = params.dataValues.difficulty;
-          problemType = params.dataValues.problemType;
-          interval = params.dataValues.interval;
-        }
-        const problem = await dailyProblem(difficulty, problemType);
-        channel.send(problem);
-      })()
-    });
-    scheduledMessage.start();
-  })
+  let interval = '*/5 * * *';
+  const params = await getParams();
+  if (params) {
+    interval = params.dataValues.currentInterval;
+  }
+  const scheduledMessage = new cron.CronJob(interval, () => {
+    const guild = client.guilds.cache.get(GUILD_ID);
+    const channel = guild.channels.cache.get(CHANNEL_ID);
+    (async () => {
+      let difficulty = 'Easy';
+      let problemType = 'string';
+      const params = await getParams();
+      if (params) {
+        difficulty = params.dataValues.difficulty;
+        problemType = params.dataValues.problemType;
+        interval = params.dataValues.interval;
+      }
+      const problem = await dailyProblem(difficulty, problemType);
+      channel.send(problem);
+    })()
+  });
+  scheduledMessage.start();
 
   const checkInterval = new cron.CronJob('* * * * *', () => {
     (async () => {
       let id, previousInterval, currentInterval;
       const params = await getParams();
-      if (params && params.dataValues.previousInterval !== '') {
+      if (params) {
         id = params.dataValues.id;
         currentInterval = params.dataValues.currentInterval;
         if (currentInterval !== params.dataValues.previousInterval) {
