@@ -61,8 +61,10 @@ client.once('ready', async () => {
         const { id, guildId, currentInterval, previousInterval, run } = param;
         if (run && currentInterval !== previousInterval) {
           priorInterval = currentInterval;
-          schedule.scheduledJobs[guildId].reschedule(currentInterval)
-          updateParam(id, currentInterval, priorInterval)
+          schedule.scheduledJobs[guildId].reschedule(currentInterval);
+          updateParam(id, currentInterval, priorInterval);
+        } else if (!run) {
+          schedule.scheduledJobs[guildId].cancel();
         }
       })
     })()
