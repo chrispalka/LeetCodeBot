@@ -17,7 +17,7 @@ for (const file of commandFiles) {
   client.commands.set(command.data.name, command);
 }
 
-const { DISCORD_TOKEN, CHANNEL_ID, GUILD_ID } = process.env;
+const { DISCORD_TOKEN } = process.env;
 
 client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
