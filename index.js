@@ -45,7 +45,7 @@ client.once('ready', async () => {
       const params = await getAllParams();
       if (params.length > 0) {
         params.forEach(async (param) => {
-          const { id, guildId, channelId, currentInterval, previousInterval, run } = param;
+          const { id, guildId, channelId, difficulty, problemType, currentInterval, previousInterval, run } = param;
           if (run && !schedule.scheduledJobs[guildId]) {
             schedule.scheduleJob(guildId, currentInterval, () => {
               const guild = client.guilds.cache.get(guildId);
