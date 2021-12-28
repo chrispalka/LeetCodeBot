@@ -1,12 +1,9 @@
 const dotenv = require('dotenv');
 const fs = require('fs');
-const cron = require('cron');
-const CronTime = require('cron').CronTime
+const schedule = require('node-schedule');
 const dailyProblem = require('./jobs/tasks.js')
-const { getParams, updateParam } = require('./models/index.js');
+const { getAllParams, updateParam } = require('./models/index.js');
 const { Client, Collection, Intents } = require('discord.js');
-const { mainModule } = require('process');
-
 
 dotenv.config();
 
@@ -34,57 +31,43 @@ client.on('interactionCreate', async interaction => {
   if (!command) return;
 
   try {
-    await command.execute(interaction);
+    await command.execute(interaction)
   } catch (error) {
     console.error(error);
     await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
   }
 });
 
-
 client.once('ready', async () => {
-  let interval = '*/5 * * *';
-  const params = await getParams();
-  if (params) {
-    interval = params.dataValues.currentInterval;
-  }
-  const scheduledMessage = new cron.CronJob(interval, () => {
-    const guild = client.guilds.cache.get(GUILD_ID);
-    const channel = guild.channels.cache.get(CHANNEL_ID);
-    (async () => {
-      let difficulty = 'Easy';
-      let problemType = 'string';
-      const params = await getParams();
-      if (params) {
-        difficulty = params.dataValues.difficulty;
-        problemType = params.dataValues.problemType;
-        interval = params.dataValues.interval;
-      }
-      const problem = await dailyProblem(difficulty, problemType);
-      channel.send(problem);
-    })()
+  const params = await getAllParams();
+  params.forEach(async (param) => {
+    const { guildId, channelId, currentInterval, difficulty, problemType, run } = param;
+    if (run) {
+      schedule.scheduleJob(guildId, currentInterval, () => {
+        const guild = client.guilds.cache.get(guildId);
+        const channel = guild.channels.cache.get(channelId);
+        (async () => {
+          const problem = await dailyProblem(difficulty, problemType);
+          channel.send(problem);
+        })()
+      })
+    }
   });
-  scheduledMessage.start();
-
-  const checkInterval = new cron.CronJob('* * * * *', () => {
+  schedule.scheduleJob('* * * * *', () => {
     (async () => {
-      let id, previousInterval, currentInterval;
-      const params = await getParams();
-      if (params) {
-        id = params.dataValues.id;
-        currentInterval = params.dataValues.currentInterval;
-        if (currentInterval !== params.dataValues.previousInterval) {
-          previousInterval = params.dataValues.currentInterval;
-          scheduledMessage.setTime(new CronTime(currentInterval))
-          scheduledMessage.start();
-          updateParam(id, currentInterval, previousInterval)
+      let priorInterval;
+      const params = await getAllParams();
+      params.forEach(async (param) => {
+        const { id, guildId, currentInterval, previousInterval, run } = param;
+        if (run && currentInterval !== previousInterval) {
+          priorInterval = currentInterval;
+          schedule.scheduledJobs[guildId].reschedule(currentInterval)
+          updateParam(id, currentInterval, priorInterval)
         }
-      }
+      })
     })()
   });
-  checkInterval.start();
-})
-
+});
 
 client.login(DISCORD_TOKEN);
 

@@ -20,6 +20,16 @@ module.exports = {
       previousInterval: {
         type: Sequelize.STRING
       },
+      guildId: {
+        type: Sequelize.STRING
+      },
+      channelId: {
+        type: Sequelize.STRING
+      },
+      run: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: true,
+      },
     });
   },
   down: async (queryInterface, Sequelize) => {

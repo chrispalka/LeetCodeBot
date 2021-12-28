@@ -42,18 +42,29 @@ module.exports = {
     { where: { id } }
   ).then((response) => response)
     .catch((err) => console.log(err)),
-  addParam: (difficulty, problemType, currentInterval, previousInterval) => db.params.create({
-    difficulty, problemType, currentInterval, previousInterval
+  updateRun: (id, run) => db.params.upsert({
+    id, run
+  },
+    { where: { id } }
+  ).then((response) => response)
+    .catch((err) => console.log(err)),
+  addParam: (difficulty, problemType, currentInterval, previousInterval, guildId, channelId, job) => db.params.create({
+    difficulty, problemType, currentInterval, previousInterval, guildId, channelId, job
   }).then((response) => response)
     .catch((err) => console.log(err)),
   deleteParam: () => db.params.destroy({
     where: {}
   }).then((response) => response)
     .catch((err) => console.log(err)),
-  getParams: () => db.params.findOne({
-    where: {}
+  getParams: (guildId) => db.params.findOne({
+    where: {
+      guildId
+    }
   })
     .then(response => response)
+    .catch((err) => console.log(err)),
+  getAllParams: () => db.params.findAll()
+    .then((response) => response)
     .catch((err) => console.log(err)),
   getInterval: (interval) => db.params.findAll({
     attributes: [

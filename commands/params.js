@@ -1,6 +1,5 @@
 const questions = require('../questions.json')
 const titleCaseHelper = require('../helpers/titleCaseHelper.js');
-const Sequelize = require('sequelize');
 const { addParam, updateParam, getParams } = require('../models/index.js');
 const { SlashCommandBuilder } = require('@discordjs/builders');
 
@@ -9,6 +8,7 @@ module.exports = {
     .setName('params')
     .setDescription('Sets bot parameters'),
   async execute(interaction) {
+    let guildId, channelId;
     let difficulty = '';
     let problemType = '';
     let interval = '';
@@ -29,6 +29,8 @@ module.exports = {
       .then(() => {
         interaction.channel.awaitMessages({ filter, max: 1, time: 30000, errors: ['time'] })
           .then((collected) => {
+            guildId = collected.first().guildId;
+            channelId = collected.first().channelId;
             difficulty = titleCaseHelper(collected.first().content)
             filterType = 'question_two'
             question = 2;
@@ -58,7 +60,7 @@ module.exports = {
                                 interval = collected.first().content.toLowerCase();
                                 (async () => {
                                   let previousInterval = '';
-                                  const params = await getParams();
+                                  const params = await getParams(guildId);
                                   if (params) {
                                     id = params.dataValues.id;
                                     previousInterval = params.dataValues.currentInterval;
@@ -67,7 +69,7 @@ module.exports = {
                                         interaction.followUp('Configuration Updated')
                                       })
                                   } else {
-                                    addParam(difficulty, problemType, intervals[interval], previousInterval)
+                                    addParam(difficulty, problemType, intervals[interval], previousInterval, guildId, channelId)
                                       .then(() => {
                                         interaction.followUp('Configuration Updated')
                                       })

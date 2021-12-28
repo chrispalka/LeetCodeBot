@@ -18,6 +18,9 @@ module.exports = (sequelize, DataTypes) => {
     problemType: DataTypes.STRING,
     currentInterval: DataTypes.STRING,
     previousInterval: DataTypes.STRING,
+    guildId: DataTypes.STRING,
+    channelId: DataTypes.STRING,
+    run: DataTypes.BOOLEAN,
   }, {
     sequelize,
     modelName: 'params',
