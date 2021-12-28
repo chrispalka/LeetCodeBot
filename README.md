@@ -27,9 +27,9 @@ PGDATABASE=
 PGPASSWORD=
 PGPORT=
 ```
-For production environments configure config/config.json respectively
+For production environments configure config/config.js respectively
 
-```
+```sh
 module.exports = {
   "development": {
     "username": process.env.PGUSER,
@@ -61,6 +61,37 @@ Start Application
 npm run start
 ```
 
+To add new commands, create a new command/command.js file as seen in the below template (ping.js)
+```sh
+const { SlashCommandBuilder } = require('@discordjs/builders');
+
+module.exports = {
+	data: new SlashCommandBuilder()
+		.setName('ping')
+		.setDescription('Replies with Pong!'),
+	async execute(interaction) {
+		await interaction.reply('Pong!');
+	},
+};
+```
+Then make sure to deploy-commands either manually below or via a script on push
+```
+node deploy-commands.js
+```
+_(This application is set to utilize global commands via Routes.applicationcommands) i.e. they are cached for at least 1 hour and may not propogate across all channels the bot is present in for that duration. It is recommended to utilize Routes.applicationGuildCommands during development as they will show up immediately. example below (from deploy-commands.js):_
+
+##### Development
+```sh
+rest.put(Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID), { body: commands })
+  .then(() => console.log('Successfully registered application commands.'))
+  .catch(console.error);
+```
+##### Production
+```sh
+rest.put(Routes.applicationCommands(CLIENT_ID), { body: commands })
+  .then(() => console.log('Successfully registered application commands.'))
+  .catch(console.error);
+```
 ## License
 
 MIT
