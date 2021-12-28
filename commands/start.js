@@ -23,7 +23,7 @@ module.exports = {
                 id = params.dataValues.id;
                 updateRun(id, run)
                   .then(() => {
-                    interaction.followUp('Configuration Updated');
+                    interaction.followUp('Configuration Updated! Please allow up to one minute for changes to reflect');
                   })
               } else if (!run) {
                 interaction.followUp('Query cancelled');

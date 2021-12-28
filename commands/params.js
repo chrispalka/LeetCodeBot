@@ -66,12 +66,12 @@ module.exports = {
                                     previousInterval = params.dataValues.currentInterval;
                                     updateParam(id, intervals[interval], previousInterval)
                                       .then(() => {
-                                        interaction.followUp('Configuration Updated')
+                                        interaction.followUp('Configuration Updated! Please allow up to one minute for changes to reflect')
                                       })
                                   } else {
                                     addParam(difficulty, problemType, intervals[interval], previousInterval, guildId, channelId)
                                       .then(() => {
-                                        interaction.followUp('Configuration Updated')
+                                        interaction.followUp('Configuration Updated! Please allow up to one minute for changes to reflect')
                                       })
                                   }
                                 })()
