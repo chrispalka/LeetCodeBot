@@ -57,8 +57,18 @@ module.exports = {
 ```
 
 Start Application
-```
+```sh
 npm run start
+/params # - to set up recurring coding problem
+```
+
+Commands
+```
+/ping - replies with 'Pong!'
+/params - initialize recurring coding problem
+/code - manually grab coding problem
+/start - start recurring coding problem if stopped (start by default)
+/stop - stop recurring coding problem
 ```
 
 To add new commands, create a new command/command.js file as seen in the below template (ping.js)
