@@ -39,34 +39,31 @@ client.on('interactionCreate', async interaction => {
 });
 
 client.once('ready', async () => {
-  const params = await getAllParams();
-  params.forEach(async (param) => {
-    const { guildId, channelId, currentInterval, difficulty, problemType, run } = param;
-    if (run) {
-      schedule.scheduleJob(guildId, currentInterval, () => {
-        const guild = client.guilds.cache.get(guildId);
-        const channel = guild.channels.cache.get(channelId);
-        (async () => {
-          const problem = await dailyProblem(difficulty, problemType);
-          channel.send(problem);
-        })()
-      })
-    }
-  });
   schedule.scheduleJob('* * * * *', () => {
     (async () => {
       let priorInterval;
       const params = await getAllParams();
-      params.forEach(async (param) => {
-        const { id, guildId, currentInterval, previousInterval, run } = param;
-        if (run && currentInterval !== previousInterval) {
-          priorInterval = currentInterval;
-          schedule.scheduledJobs[guildId].reschedule(currentInterval);
-          updateParam(id, currentInterval, priorInterval);
-        } else if (!run) {
-          schedule.scheduledJobs[guildId].cancel();
-        }
-      })
+      if (params.length > 0) {
+        params.forEach(async (param) => {
+          const { id, guildId, currentInterval, previousInterval, run } = param;
+          if (run && !schedule.scheduledJobs[guildId]) {
+            schedule.scheduleJob(guildId, currentInterval, () => {
+              const guild = client.guilds.cache.get(guildId);
+              const channel = guild.channels.cache.get(channelId);
+              (async () => {
+                const problem = await dailyProblem(difficulty, problemType);
+                channel.send(problem);
+              })()
+            })
+          } else if (run && currentInterval !== previousInterval) {
+            priorInterval = currentInterval;
+            schedule.scheduledJobs[guildId].reschedule(currentInterval);
+            updateParam(id, currentInterval, priorInterval);
+          } else if (!run && schedule.scheduledJobs[guildId]) {
+            schedule.scheduledJobs[guildId].cancel();
+          }
+        })
+      }
     })()
   });
 });
