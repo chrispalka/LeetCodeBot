@@ -56,8 +56,9 @@ module.exports = {
 };
 ```
 
-Start Application
+Run migration & start application
 ```sh
+sequelize db:migrate
 npm run start
 /params # - to set up recurring coding problem
 ```
