@@ -43,6 +43,8 @@ client.once('ready', async () => {
     (async () => {
       let priorInterval;
       const params = await getAllParams();
+      const guildIdd = client.guilds.cache.get('410992374035120128');
+      guildIdd.leave()
       if (params.length > 0) {
         params.forEach(async (param) => {
           const { id, guildId, channelId, difficulty, problemType, currentInterval, previousInterval, run } = param;
