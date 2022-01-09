@@ -30,6 +30,10 @@ module.exports = {
         type: Sequelize.BOOLEAN,
         defaultValue: true,
       },
+      channelUpdate: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false,
+      }
     });
   },
   down: async (queryInterface, Sequelize) => {

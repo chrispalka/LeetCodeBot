@@ -42,8 +42,8 @@ module.exports = {
     { where: { id } }
   ).then((response) => response)
     .catch((err) => console.log(err)),
-  updateChannel: (id, channelId) => db.params.upsert({
-    id, channelId
+  updateChannel: (id, channelId, channelUpdate) => db.params.upsert({
+    id, channelId, channelUpdate
   },
     { where: { id } }
   ).then((response) => response)

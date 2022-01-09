@@ -6,7 +6,7 @@ module.exports = {
     .setName('set-channel')
     .setDescription('Sets current channel for automated coding challenge'),
   async execute(interaction) {
-    let channelId;
+    let channelId, channelUpdate;
     const dict = {
       yes: true,
       no: false,
@@ -22,9 +22,10 @@ module.exports = {
               const params = await getParams(collected.first().guildId);
               if (params && response) {
                 id = params.dataValues.id;
-                updateChannel(id, channelId)
+                channelUpdate = true;
+                updateChannel(id, channelId, channelUpdate)
                   .then(() => {
-                    interaction.followUp('Channel updated! Please /stop job, wait 1 minute and /start job');
+                    interaction.followUp('Channel updated! Please wait 1 minute for changes to reflect');
                   })
               } else if (!response) {
                 interaction.followUp('Query cancelled');

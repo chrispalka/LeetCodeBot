@@ -67,7 +67,7 @@ Commands
 ```
 /ping - replies with 'Pong!'
 /params - initialize recurring coding problem
-/set-channel - updates channel for recurring coding problem (after update, /stop job and after 1 minute /start job to allow cron job to catch new settings)
+/set-channel - updates channel for recurring coding problem
 /code - manually grab coding problem
 /start - start recurring coding problem if stopped (start by default)
 /stop - stop recurring coding problem
@@ -111,4 +111,3 @@ MIT
 [discord.js]: <https://www.npmjs.com/package/discord.js>
 [node-schedule]: <https://www.npmjs.com/package/node-schedule>
 [node-postgres]: <https://www.npmjs.com/package/pg>
-   

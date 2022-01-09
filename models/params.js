@@ -21,6 +21,7 @@ module.exports = (sequelize, DataTypes) => {
     guildId: DataTypes.STRING,
     channelId: DataTypes.STRING,
     run: DataTypes.BOOLEAN,
+    channelUpdate: DataTypes.BOOLEAN,
   }, {
     sequelize,
     modelName: 'params',

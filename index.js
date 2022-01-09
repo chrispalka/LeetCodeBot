@@ -2,7 +2,7 @@ const dotenv = require('dotenv');
 const fs = require('fs');
 const schedule = require('node-schedule');
 const dailyProblem = require('./jobs/tasks.js')
-const { getAllParams, updateParam } = require('./models/index.js');
+const { getAllParams, updateParam, updateChannel } = require('./models/index.js');
 const { Client, Collection, Intents } = require('discord.js');
 
 dotenv.config();
@@ -41,11 +41,11 @@ client.on('interactionCreate', async interaction => {
 client.once('ready', async () => {
   schedule.scheduleJob('* * * * *', () => {
     (async () => {
-      let priorInterval;
+      let priorInterval, newChannel;
       const params = await getAllParams();
       if (params.length > 0) {
         params.forEach(async (param) => {
-          const { id, guildId, channelId, difficulty, problemType, currentInterval, previousInterval, run } = param;
+          const { id, guildId, channelId, difficulty, problemType, currentInterval, previousInterval, run, channelUpdate } = param;
           if (run && !schedule.scheduledJobs[guildId]) {
             schedule.scheduleJob(guildId, currentInterval, () => {
               const guild = client.guilds.cache.get(guildId);
@@ -61,6 +61,10 @@ client.once('ready', async () => {
             updateParam(id, currentInterval, priorInterval);
           } else if (!run && schedule.scheduledJobs[guildId]) {
             schedule.scheduledJobs[guildId].cancel();
+          } else if (channelUpdate && schedule.scheduledJobs[guildId]) {
+            newChannel = false;
+            schedule.scheduledJobs[guildId].cancel();
+            updateChannel(id, channelId, newChannel);
           }
         })
       }
