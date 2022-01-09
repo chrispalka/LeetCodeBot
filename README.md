@@ -57,16 +57,17 @@ module.exports = {
 ```
 
 Run migration & start application
-```sh
+```
 sequelize db:migrate
 npm run start
-/params # - to set up recurring coding problem
+/params - to set up recurring coding problem (channelId is set on initial /params configuration)
 ```
 
 Commands
 ```
 /ping - replies with 'Pong!'
 /params - initialize recurring coding problem
+/set-channel - updates channel for recurring coding problem (after update, /stop job and after 1 minute /start job to allow cron job to catch new settings)
 /code - manually grab coding problem
 /start - start recurring coding problem if stopped (start by default)
 /stop - stop recurring coding problem
